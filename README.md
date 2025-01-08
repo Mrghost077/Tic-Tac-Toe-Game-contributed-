@@ -12,6 +12,7 @@ Welcome to the Tic Tac Toe Game! This is a fun and interactive implementation of
 - Multiplayer gameplay: Play with friends on the same device.
 - Simple and intuitive user interface.
 - Responsive design for various screen sizes.
+- Beautiful and modern design using Tailwind CSS.
 - Future updates will include draw tracking.
 
 ## Installation
