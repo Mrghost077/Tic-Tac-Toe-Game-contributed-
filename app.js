@@ -12,7 +12,7 @@ function board ()
     {
         const cellElement = document.createElement("div");
         cellElement.classList.add("square");
-        cellElement.id = index
+        cellElement.id = index;
         cellElement.addEventListener("click", addSymbol);
         gameBoard.append(cellElement);
     })
@@ -31,7 +31,6 @@ function addSymbol (e)
     e.target.append(cellSymbol);
 
     calculateScore();
-
 }
 
 function calculateScore ()
