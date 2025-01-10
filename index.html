@@ -17,18 +17,23 @@
             background-color: #f0f0f0;
             border: 1px solid #ccc;
             transition: background-color 0.3s ease;
+            min-height: 50px;
+            /* Add fixed minimum height */
+            font-size: 2rem;
+            cursor: pointer;
         }
+        
         .square:hover {
             background-color: #e0e0e0;
         }
-        .circle::before {
+        
+        .square.circle::before {
             content: 'O';
-            font-size: 2rem;
             color: blue;
         }
-        .cross::before {
+        
+        .square.cross::before {
             content: 'X';
-            font-size: 2rem;
             color: red;
         }
     </style>
