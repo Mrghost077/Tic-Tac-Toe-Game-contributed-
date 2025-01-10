@@ -1,3 +1,67 @@
+// Background Animation Setup
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+
+// Set canvas size
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Create particles
+const particles = [];
+const particleCount = 100;
+const particleColors = ['#FF69B4', '#00FFFF', '#FF1493', '#7B68EE', '#00FA9A'];
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 3 - 1.5;
+        this.speedY = Math.random() * 3 - 1.5;
+        this.color = particleColors[Math.floor(Math.random() * particleColors.length)];
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+    }
+
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+// Initialize particles
+for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle());
+}
+
+// Animation loop
+function animate() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+    });
+
+    requestAnimationFrame(animate);
+}
+animate();
+
 // Initialize game elements
 const gameBoard = document.querySelector("#gameBoard");
 const gameInfo = document.querySelector('#gameInfo');
@@ -7,100 +71,11 @@ let cells = Array(9).fill("");
 let playTurn = "circle";
 let gameActive = true;
 
-// Cursor effect setup
-const cursor = document.createElement('div');
-cursor.classList.add('cursor');
-document.body.appendChild(cursor);
-
-const colors = ['#ff0000', '#ff8700', '#ffd300', '#deff0a', '#a4ff0a', '#0aff99', '#0aefff', '#147df5', '#580aff', '#be0aff'];
-let colorIndex = 0;
-
-// Add cursor trail
-const trailCount = 20;
-const trails = [];
-for (let i = 0; i < trailCount; i++) {
-    const trail = document.createElement('div');
-    trail.classList.add('cursor-trail');
-    trail.style.opacity = 1 - (i / trailCount);
-    document.body.appendChild(trail);
-    trails.push({ element: trail, x: 0, y: 0 });
-}
-
-let currentX = 0;
-let currentY = 0;
-let targetX = 0;
-let targetY = 0;
-
 // Event listeners
-document.addEventListener('mousemove', updateCursor);
 restartButton.addEventListener('click', restartGame);
-document.addEventListener('mousedown', () => cursor.classList.add('cursor-click'));
-document.addEventListener('mouseup', () => cursor.classList.remove('cursor-click'));
-document.addEventListener('click', createSplash);
 
 // Initialize game
 initializeGame();
-
-function updateCursor(e) {
-    targetX = e.clientX - 10;
-    targetY = e.clientY - 10;
-}
-
-function animateCursor() {
-    // Smooth movement with lerp
-    currentX += (targetX - currentX) * 0.15;
-    currentY += (targetY - currentY) * 0.15;
-
-    cursor.style.left = `${currentX}px`;
-    cursor.style.top = `${currentY}px`;
-    cursor.style.borderColor = colors[colorIndex];
-
-    // Update trails
-    trails.forEach((trail, index) => {
-        setTimeout(() => {
-            trail.x += (currentX - trail.x) * 0.3;
-            trail.y += (currentY - trail.y) * 0.3;
-            trail.element.style.left = `${trail.x}px`;
-            trail.element.style.top = `${trail.y}px`;
-            trail.element.style.borderColor = colors[(colorIndex + index) % colors.length];
-        }, index * 30);
-    });
-
-    colorIndex = (colorIndex + 1) % colors.length;
-    requestAnimationFrame(animateCursor);
-}
-
-// Start animation
-animateCursor();
-
-function createSplash(e) {
-    const splash = document.createElement('div');
-    splash.className = 'splash';
-    splash.style.left = `${e.clientX - 50}px`;
-    splash.style.top = `${e.clientY - 50}px`;
-
-    const particleCount = 12;
-    const colors = ['#FF69B4', '#00FFFF', '#FF1493', '#7B68EE', '#00FA9A'];
-
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'splash-particle';
-        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-        const angle = (i * (360 / particleCount)) * (Math.PI / 180);
-        const distance = 50 + Math.random() * 30;
-        const tx = Math.cos(angle) * distance;
-        const ty = Math.sin(angle) * distance;
-
-        particle.style.setProperty('--tx', `${tx}px`);
-        particle.style.setProperty('--ty', `${ty}px`);
-
-        splash.appendChild(particle);
-    }
-
-    document.body.appendChild(splash);
-    setTimeout(() => splash.remove(), 1000);
-}
 
 function initializeGame() {
     gameInfo.textContent = 'Game On, Circle goes first!';

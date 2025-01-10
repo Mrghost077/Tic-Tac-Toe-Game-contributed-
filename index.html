@@ -34,6 +34,7 @@
             justify-content: center;
             flex-direction: column;
             align-items: center;
+            position: relative;
         }
         
         .square {
@@ -67,97 +68,24 @@
             font-weight: bold;
         }
         
-        .cursor {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ffd700;
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: transform 0.2s ease;
-        }
-        
-        .cursor-trail {
-            width: 15px;
-            height: 15px;
-            border: 2px solid #ffd700;
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9998;
-            mix-blend-mode: difference;
-        }
-        
-        .cursor-click {
-            transform: scale(0.7);
-        }
-        
-        .square:hover~.cursor {
-            transform: scale(1.5);
-        }
-        
-        button:hover~.cursor {
-            transform: scale(1.5);
-        }
-        
-        .cursor::before {
-            content: '';
-            width: 20px;
-            height: 20px;
-            position: absolute;
-            border: 8px solid #ff1493;
-            border-radius: 50%;
-            opacity: .5;
-            animation: pulse 1s ease-out infinite;
-        }
-        
-        @keyframes pulse {
-            to {
-                transform: scale(2);
-                opacity: 0;
-            }
-        }
-        
         #gameInfo {
             background: rgba(31, 41, 55, 0.8);
             backdrop-filter: blur(5px);
         }
         
-        .splash {
+        #bgCanvas {
             position: fixed;
-            pointer-events: none;
-            width: 100px;
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9997;
-        }
-        
-        .splash-particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            animation: splash-particle 0.6s ease-out forwards;
-        }
-        
-        @keyframes splash-particle {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(0) translate(var(--tx), var(--ty));
-            }
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
     </style>
 </head>
 
 <body class="text-white flex flex-col items-center justify-center min-h-screen">
+    <canvas id="bgCanvas"></canvas>
     <h1 class="text-5xl font-extrabold mb-8 text-pink-500 hover:text-pink-400 transition-colors">Tic Tac Toe</h1>
 
     <div id="gameBoard" class="grid grid-cols-3 gap-4 w-72 h-72 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4 rounded-lg shadow-lg"></div>
