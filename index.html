@@ -6,53 +6,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TIC TAC TOE</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+        
         .square {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
             height: 100%;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            transition: background-color 0.3s ease;
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            transition: all 0.3s ease;
             min-height: 50px;
-            /* Add fixed minimum height */
             font-size: 2rem;
             cursor: pointer;
         }
         
         .square:hover {
             background-color: #e0e0e0;
+            transform: scale(1.05);
         }
         
         .square.circle::before {
             content: 'O';
-            color: blue;
+            color: #4169e1;
+            font-weight: bold;
         }
         
         .square.cross::before {
             content: 'X';
-            color: red;
+            color: #dc143c;
+            font-weight: bold;
+        }
+        
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffd700;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        .cursor::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            border: 8px solid #ff1493;
+            border-radius: 50%;
+            opacity: .5;
+            animation: pulse 1s ease-out infinite;
+        }
+        
+        @keyframes pulse {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        
+        #gameInfo {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(5px);
         }
     </style>
-
 </head>
 
-<body class="bg-gradient-to-r from-blue-500 to-purple-500 text-white flex flex-col items-center justify-center min-h-screen">
-    <h1 class="text-5xl font-extrabold mb-8">Tic Tac Toe</h1>
-    <div id="gameBoard" class="grid grid-cols-3 gap-4 w-64 h-64 bg-white rounded-lg shadow-lg p-4"></div>
-    <p id="gameInfo" class="mt-4 text-xl p-2 border-2 border-white rounded-lg bg-gray-800"></p>
+<body class="text-white flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-5xl font-extrabold mb-8 text-pink-500 hover:text-pink-400 transition-colors">Tic Tac Toe</h1>
+
+    <div id="gameBoard" class="grid grid-cols-3 gap-4 w-72 h-72 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4 rounded-lg shadow-lg"></div>
+
+    <p id="gameInfo" class="mt-4 text-xl p-3 border-2 border-white rounded-lg"></p>
     <p id="restartInfo" class="mt-2 text-sm text-gray-300"></p>
-    <button id="restartButton" class="mt-4 px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+
+    <button id="restartButton" class="mt-4 px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors transform hover:scale-105">
         Restart Game
     </button>
+
+    <footer class="mt-8 text-center text-gray-300">
+        <p>&copy; 2024 Tic-Tac-Toe Game. Made with ❤️ by Madhuka</p>
+    </footer>
+
     <script src="app.js"></script>
 </body>
-
-<footer class="mt-8 text-center text-gray-300">
-    <p>&copy; 2024 Tic-Tac-Toe Game. Made with ❤️ by Madhuka</p>
-</footer>
 
 </html>

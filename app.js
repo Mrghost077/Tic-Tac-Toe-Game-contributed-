@@ -1,90 +1,111 @@
+// Initialize game elements
 const gameBoard = document.querySelector("#gameBoard");
 const gameInfo = document.querySelector('#gameInfo');
 const restartInfo = document.querySelector('#restartInfo');
 const restartButton = document.querySelector('#restartButton');
-let cells = ["", "", "", "", "", "", "", "", ""];
+let cells = Array(9).fill("");
 let playTurn = "circle";
+let gameActive = true;
 
-gameInfo.textContent = 'Game On, Circle goes first !';
+// Cursor effect setup
+const cursor = document.createElement('div');
+cursor.classList.add('cursor');
+document.body.appendChild(cursor);
 
-function board() {
-    cells.forEach((_cell, index) => {
+const colors = ['#ff0000', '#ff8700', '#ffd300', '#deff0a', '#a4ff0a', '#0aff99', '#0aefff', '#147df5', '#580aff', '#be0aff'];
+let colorIndex = 0;
+
+// Event listeners
+document.addEventListener('mousemove', updateCursor);
+restartButton.addEventListener('click', restartGame);
+
+// Initialize game
+initializeGame();
+
+function updateCursor(e) {
+    cursor.style.left = `${e.clientX - 10}px`;
+    cursor.style.top = `${e.clientY - 10}px`;
+    cursor.style.borderColor = colors[colorIndex];
+    colorIndex = (colorIndex + 1) % colors.length;
+}
+
+function initializeGame() {
+    gameInfo.textContent = 'Game On, Circle goes first!';
+    createBoard();
+}
+
+function createBoard() {
+    gameBoard.innerHTML = '';
+    cells.forEach((_, index) => {
         const cellElement = document.createElement("div");
         cellElement.classList.add("square");
         cellElement.id = index;
-        cellElement.addEventListener("click", addSymbol);
-        gameBoard.append(cellElement);
-    })
+        cellElement.addEventListener("click", handleCellClick);
+        gameBoard.appendChild(cellElement);
+    });
 }
 
-board();
+function handleCellClick(e) {
+    const cell = e.target;
+    if (!gameActive || cell.classList.contains('circle') || cell.classList.contains('cross')) {
+        return;
+    }
 
-restartButton.addEventListener('click', restartGame);
+    cell.classList.add(playTurn);
+    cells[cell.id] = playTurn;
 
-function addSymbol(e) {
-    restartInfo.textContent = 'Press F5 in keyboard to restart the game';
-    e.target.classList.add(playTurn);
-    cells[e.target.id] = playTurn;
+    if (checkWinner()) {
+        endGame(`${playTurn.charAt(0).toUpperCase() + playTurn.slice(1)} Wins the Game!!!`);
+        return;
+    }
+
+    if (checkDraw()) {
+        endGame("It's a Draw!!!");
+        return;
+    }
+
     playTurn = playTurn === "circle" ? "cross" : "circle";
-    gameInfo.textContent = "Now it is " + playTurn + "'s turn !";
-    e.target.removeEventListener("click", addSymbol);
-
-    calculateScore();
+    gameInfo.textContent = `Now it is ${playTurn}'s turn!`;
+    restartInfo.textContent = 'Press F5 or click Restart Game to start over';
 }
 
-function calculateScore() {
-    const allSquares = document.querySelectorAll(".square");
-    const winningCombinations = [
+function checkWinner() {
+    const winningCombos = [
         [0, 1, 2],
         [3, 4, 5],
-        [6, 7, 8],
+        [6, 7, 8], // Rows
         [0, 3, 6],
         [1, 4, 7],
-        [2, 5, 8],
+        [2, 5, 8], // Columns
         [0, 4, 8],
-        [2, 4, 6]
+        [2, 4, 6] // Diagonals
     ];
 
-    let gameWon = false;
+    return winningCombos.some(combo => {
+        return combo.every(index => {
+            const cell = document.getElementById(index);
+            return cell.classList.contains(playTurn);
+        });
+    });
+}
 
-    winningCombinations.forEach(array => {
-        const circleWin = array.every(cell =>
-            allSquares[cell].classList.contains("circle"));
+function checkDraw() {
+    return [...document.querySelectorAll('.square')]
+        .every(cell => cell.classList.contains('circle') || cell.classList.contains('cross'));
+}
 
-        if (circleWin) {
-            gameInfo.textContent = "Circle Wins the Game !!!"
-            gameWon = true;
-            allSquares.forEach(square => square.replaceWith(square.cloneNode(true)));
-        }
-    })
-
-    winningCombinations.forEach(array => {
-        const crossWin = array.every(cell =>
-            allSquares[cell].classList.contains("cross"));
-
-        if (crossWin) {
-            gameInfo.textContent = "Cross Wins the Game !!!";
-            gameWon = true;
-            allSquares.forEach(square => square.replaceWith(square.cloneNode(true)));
-        }
-    })
-
-    if (!gameWon && [...allSquares].every(square =>
-            square.classList.contains('circle') || square.classList.contains('cross'))) {
-        gameInfo.textContent = "It's a Draw !!!";
-        allSquares.forEach(square => square.replaceWith(square.cloneNode(true)));
-    }
+function endGame(message) {
+    gameActive = false;
+    gameInfo.textContent = message;
+    document.querySelectorAll('.square')
+        .forEach(square => square.removeEventListener('click', handleCellClick));
 }
 
 function restartGame() {
-    cells = ["", "", "", "", "", "", "", "", ""];
+    cells = Array(9).fill("");
     playTurn = "circle";
-    gameInfo.textContent = 'Game On, Circle goes first !';
+    gameActive = true;
+    gameInfo.textContent = 'Game On, Circle goes first!';
     restartInfo.textContent = '';
-
-    // Clear the game board
-    gameBoard.innerHTML = '';
-
-    // Recreate the board
-    board();
+    createBoard();
 }
