@@ -1,7 +1,8 @@
 const gameBoard = document.querySelector("#gameBoard");
 const gameInfo = document.querySelector('#gameInfo');
 const restartInfo = document.querySelector('#restartInfo');
-const cells = ["", "", "", "", "", "", "", "", "", ];
+const restartButton = document.querySelector('#restartButton');
+let cells = ["", "", "", "", "", "", "", "", ""];
 let playTurn = "circle";
 
 gameInfo.textContent = 'Game On, Circle goes first !';
@@ -17,6 +18,8 @@ function board() {
 }
 
 board();
+
+restartButton.addEventListener('click', restartGame);
 
 function addSymbol(e) {
     restartInfo.textContent = 'Press F5 in keyboard to restart the game';
@@ -71,4 +74,17 @@ function calculateScore() {
         gameInfo.textContent = "It's a Draw !!!";
         allSquares.forEach(square => square.replaceWith(square.cloneNode(true)));
     }
+}
+
+function restartGame() {
+    cells = ["", "", "", "", "", "", "", "", ""];
+    playTurn = "circle";
+    gameInfo.textContent = 'Game On, Circle goes first !';
+    restartInfo.textContent = '';
+
+    // Clear the game board
+    gameBoard.innerHTML = '';
+
+    // Recreate the board
+    board();
 }
