@@ -21,7 +21,7 @@ To get started with the Tic Tac Toe game, follow these steps:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Mrghost077/Tic-Tac-Toe-JS-.git
+   git clone https://github.com/MadhukaH/Tic-Tac-Toe-Game.git
    ```
 
 2. **Navigate to project directory**:
