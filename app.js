@@ -67,12 +67,15 @@ const gameBoard = document.querySelector("#gameBoard");
 const gameInfo = document.querySelector('#gameInfo');
 const restartInfo = document.querySelector('#restartInfo');
 const restartButton = document.querySelector('#restartButton');
+const modeSelect = document.querySelector('#modeSelect'); // Add mode selection element
 let cells = Array(9).fill("");
 let playTurn = "circle";
 let gameActive = true;
+let gameMode = "twoPlayers"; // Default mode
 
 // Event listeners
 restartButton.addEventListener('click', restartGame);
+modeSelect.addEventListener('change', changeMode); // Add event listener for mode change
 
 // Initialize game
 initializeGame();
@@ -115,6 +118,17 @@ function handleCellClick(e) {
     playTurn = playTurn === "circle" ? "cross" : "circle";
     gameInfo.textContent = `Now it is ${playTurn}'s turn!`;
     restartInfo.textContent = 'Press F5 or click Restart Game to start over';
+
+    if (gameMode === "onePlayer" && playTurn === "cross") {
+        setTimeout(autoPlay, 500); // Auto play for cross
+    }
+}
+
+function autoPlay() {
+    const emptyCells = cells.map((cell, index) => cell === "" ? index : null).filter(index => index !== null);
+    const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    const cell = document.getElementById(randomIndex);
+    cell.click();
 }
 
 function checkWinner() {
@@ -156,4 +170,9 @@ function restartGame() {
     gameInfo.textContent = 'Game On, Circle goes first!';
     restartInfo.textContent = '';
     createBoard();
+}
+
+function changeMode() {
+    gameMode = modeSelect.value;
+    restartGame();
 }
