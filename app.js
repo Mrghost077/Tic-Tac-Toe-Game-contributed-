@@ -125,10 +125,85 @@ function handleCellClick(e) {
 }
 
 function autoPlay() {
-    const emptyCells = cells.map((cell, index) => cell === "" ? index : null).filter(index => index !== null);
-    const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    const cell = document.getElementById(randomIndex);
+    const bestMove = findBestMove();
+    const cell = document.getElementById(bestMove);
     cell.click();
+}
+
+function findBestMove() {
+    let bestVal = -Infinity;
+    let bestMove = -1;
+
+    for (let i = 0; i < cells.length; i++) {
+        if (cells[i] === "") {
+            cells[i] = playTurn;
+            let moveVal = minimax(cells, 0, false);
+            cells[i] = "";
+
+            if (moveVal > bestVal) {
+                bestMove = i;
+                bestVal = moveVal;
+            }
+        }
+    }
+    return bestMove;
+}
+
+function minimax(board, depth, isMaximizing) {
+    const score = evaluate(board);
+
+    if (score === 10) return score - depth;
+    if (score === -10) return score + depth;
+    if (isBoardFull(board)) return 0;
+
+    if (isMaximizing) {
+        let best = -Infinity;
+        for (let i = 0; i < board.length; i++) {
+            if (board[i] === "") {
+                board[i] = playTurn;
+                best = Math.max(best, minimax(board, depth + 1, false));
+                board[i] = "";
+            }
+        }
+        return best;
+    } else {
+        let best = Infinity;
+        const opponent = playTurn === "circle" ? "cross" : "circle";
+        for (let i = 0; i < board.length; i++) {
+            if (board[i] === "") {
+                board[i] = opponent;
+                best = Math.min(best, minimax(board, depth + 1, true));
+                board[i] = "";
+            }
+        }
+        return best;
+    }
+}
+
+function evaluate(board) {
+    const winningCombos = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8], // Rows
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8], // Columns
+        [0, 4, 8],
+        [2, 4, 6] // Diagonals
+    ];
+
+    for (let combo of winningCombos) {
+        const [a, b, c] = combo;
+        if (board[a] === board[b] && board[b] === board[c]) {
+            if (board[a] === playTurn) return 10;
+            if (board[a] === (playTurn === "circle" ? "cross" : "circle")) return -10;
+        }
+    }
+    return 0;
+}
+
+function isBoardFull(board) {
+    return board.every(cell => cell !== "");
 }
 
 function checkWinner() {
