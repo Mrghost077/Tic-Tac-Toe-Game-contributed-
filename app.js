@@ -71,7 +71,7 @@ const modeSelect = document.querySelector('#modeSelect'); // Add mode selection 
 let cells = Array(9).fill("");
 let playTurn = "circle";
 let gameActive = true;
-let gameMode = "twoPlayers"; // Default mode
+let gameMode = "onePlayer"; // Default mode
 
 // Event listeners
 restartButton.addEventListener('click', restartGame);
@@ -81,6 +81,7 @@ modeSelect.addEventListener('change', changeMode); // Add event listener for mod
 initializeGame();
 
 function initializeGame() {
+    modeSelect.value = gameMode; // Set the default mode in the dropdown
     gameInfo.textContent = 'Game On, Circle goes first!';
     createBoard();
 }
