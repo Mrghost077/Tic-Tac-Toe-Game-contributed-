@@ -68,20 +68,26 @@ const gameInfo = document.querySelector('#gameInfo');
 const restartInfo = document.querySelector('#restartInfo');
 const restartButton = document.querySelector('#restartButton');
 const modeSelect = document.querySelector('#modeSelect'); // Add mode selection element
+const difficultySelectContainer = document.querySelector('#difficultySelectContainer');
+const difficultySelect = document.querySelector('#difficultySelect');
 let cells = Array(9).fill("");
 let playTurn = "circle";
 let gameActive = true;
 let gameMode = "onePlayer"; // Default mode
+let difficultyLevel = "normal"; // Default difficulty level
 
 // Event listeners
 restartButton.addEventListener('click', restartGame);
 modeSelect.addEventListener('change', changeMode); // Add event listener for mode change
+difficultySelect.addEventListener('change', changeDifficulty);
 
 // Initialize game
 initializeGame();
 
 function initializeGame() {
     modeSelect.value = gameMode; // Set the default mode in the dropdown
+    difficultySelect.value = difficultyLevel;
+    difficultySelect.style.display = gameMode === "onePlayer" ? "block" : "none"; // Show difficulty select only in onePlayer mode
     gameInfo.textContent = 'Game On, Circle goes first!';
     createBoard();
 }
@@ -126,19 +132,31 @@ function handleCellClick(e) {
 }
 
 function autoPlay() {
-    const bestMove = findBestMove();
+    let bestMove;
+    if (difficultyLevel === "easy") {
+        bestMove = findRandomMove();
+    } else if (difficultyLevel === "normal") {
+        bestMove = findBestMove(1);
+    } else {
+        bestMove = findBestMove();
+    }
     const cell = document.getElementById(bestMove);
     cell.click();
 }
 
-function findBestMove() {
+function findRandomMove() {
+    const availableMoves = cells.map((cell, index) => cell === "" ? index : null).filter(index => index !== null);
+    return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+}
+
+function findBestMove(depthLimit = Infinity) {
     let bestVal = -Infinity;
     let bestMove = -1;
 
     for (let i = 0; i < cells.length; i++) {
         if (cells[i] === "") {
             cells[i] = playTurn;
-            let moveVal = minimax(cells, 0, false);
+            let moveVal = minimax(cells, 0, false, depthLimit);
             cells[i] = "";
 
             if (moveVal > bestVal) {
@@ -150,7 +168,9 @@ function findBestMove() {
     return bestMove;
 }
 
-function minimax(board, depth, isMaximizing) {
+function minimax(board, depth, isMaximizing, depthLimit) {
+    if (depth >= depthLimit) return 0;
+
     const score = evaluate(board);
 
     if (score === 10) return score - depth;
@@ -162,7 +182,7 @@ function minimax(board, depth, isMaximizing) {
         for (let i = 0; i < board.length; i++) {
             if (board[i] === "") {
                 board[i] = playTurn;
-                best = Math.max(best, minimax(board, depth + 1, false));
+                best = Math.max(best, minimax(board, depth + 1, false, depthLimit));
                 board[i] = "";
             }
         }
@@ -173,7 +193,7 @@ function minimax(board, depth, isMaximizing) {
         for (let i = 0; i < board.length; i++) {
             if (board[i] === "") {
                 board[i] = opponent;
-                best = Math.min(best, minimax(board, depth + 1, true));
+                best = Math.min(best, minimax(board, depth + 1, true, depthLimit));
                 board[i] = "";
             }
         }
@@ -250,5 +270,11 @@ function restartGame() {
 
 function changeMode() {
     gameMode = modeSelect.value;
+    difficultySelect.style.display = gameMode === "onePlayer" ? "block" : "none"; // Show difficulty select only in onePlayer mode
+    restartGame();
+}
+
+function changeDifficulty() {
+    difficultyLevel = difficultySelect.value;
     restartGame();
 }
