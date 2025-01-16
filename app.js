@@ -118,7 +118,7 @@ function handleCellClick(e) {
 
     playTurn = playTurn === "circle" ? "cross" : "circle";
     gameInfo.textContent = `Now it is ${playTurn}'s turn!`;
-    restartInfo.textContent = 'Press F5 or click Restart Game to start over';
+    restartInfo.textContent = ''; // Remove the restart info text
 
     if (gameMode === "onePlayer" && playTurn === "cross") {
         setTimeout(autoPlay, 500); // Auto play for cross
