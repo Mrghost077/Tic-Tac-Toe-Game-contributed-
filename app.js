@@ -87,6 +87,7 @@ initializeGame();
 function initializeGame() {
     modeSelect.value = gameMode; // Set the default mode in the dropdown
     difficultySelect.value = difficultyLevel;
+    difficultySelect.style.display = gameMode === "onePlayer" ? "block" : "none"; // Show difficulty select only in onePlayer mode
     gameInfo.textContent = 'Game On, Circle goes first!';
     createBoard();
 }
@@ -269,7 +270,7 @@ function restartGame() {
 
 function changeMode() {
     gameMode = modeSelect.value;
-    difficultySelectContainer.style.display = gameMode === "onePlayer" ? "block" : "none";
+    difficultySelect.style.display = gameMode === "onePlayer" ? "block" : "none"; // Show difficulty select only in onePlayer mode
     restartGame();
 }
 
