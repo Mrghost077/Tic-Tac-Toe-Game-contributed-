@@ -1,6 +1,6 @@
 # Tic Tac Toe Game
 
-Welcome to the Tic Tac Toe Game! This is a fun and interactive implementation of the classic Tic Tac Toe game using JavaScript, HTML, and Tailwind CSS. Enjoy playing with friends on the same device!
+Welcome to the Tic Tac Toe Game! This is a fun and interactive implementation of the classic Tic Tac Toe game using JavaScript, HTML, and Tailwind CSS. Enjoy playing with friends on the same device or against the computer!
 
 ## Table of Contents
 
@@ -10,6 +10,7 @@ Welcome to the Tic Tac Toe Game! This is a fun and interactive implementation of
 ## Features
 
 - Multiplayer gameplay: Play with friends on the same device.
+- Single-player mode: Play against the computer.
 - Simple and intuitive user interface.
 - Responsive design for various screen sizes.
 - Beautiful and modern design using Tailwind CSS.
