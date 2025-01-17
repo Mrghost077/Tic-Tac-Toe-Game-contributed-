@@ -136,7 +136,7 @@ function autoPlay() {
     if (difficultyLevel === "easy") {
         bestMove = findRandomMove();
     } else if (difficultyLevel === "normal") {
-        bestMove = findBestMove(1);
+        bestMove = normalMode();
     } else {
         bestMove = findBestMove();
     }
@@ -148,6 +148,94 @@ function findRandomMove() {
     const availableMoves = cells.map((cell, index) => cell === "" ? index : null).filter(index => index !== null);
     return availableMoves[Math.floor(Math.random() * availableMoves.length)];
 }
+
+function findWinningMove(board, player) {
+    const winningCombos = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6], 
+        [1, 4, 7], 
+        [2, 5, 8], 
+        [0, 4, 8], 
+        [2, 4, 6]             
+    ];
+
+    for (let combo of winningCombos) {
+        const [a, b, c] = combo;
+        const values = [board[a], board[b], board[c]];
+
+        // Count how many times the player appears in this combo
+        const count = values.filter(val => val === player).length;
+        const emptyIndex = values.indexOf(""); // Find empty spot
+
+        // If 2 out of 3 positions belong to the player and one is empty, return that index
+        if (count === 2 && emptyIndex !== -1) {
+            return combo[emptyIndex]; // Return the winning/blocking move
+        }
+    }
+
+    return null; // No winning move found
+}
+
+function getStrategicSpots(board) {
+    // Prioritize corners first
+    const corners = [0, 2, 6, 8].filter(index => board[index] === "");
+    if (corners.length > 0) {
+        return corners;
+    }
+
+    // Then prioritize sides
+    const sides = [1, 3, 5, 7].filter(index => board[index] === "");
+    if (sides.length > 0) {
+        console.log("Available sides:", sides);
+        return sides;
+    }
+
+    // If no strategic spots available, return an empty array
+    return [];
+}
+
+
+function normalMode() {
+    
+
+    // 70% chance to play strategically, 30% chance to play randomly
+    if (Math.random() < 0.7) {
+
+        // Try to win in one move
+        const winningMove = findWinningMove(cells, 'cross'); // AI is 'cross'
+        if (winningMove !== null) {
+            return winningMove;
+        }
+
+        // Try to block opponent's winning move
+        const blockingMove = findWinningMove(cells, 'circle'); // Opponent is 'circle'
+        if (blockingMove !== null) {
+            return blockingMove;
+        }
+
+        // If center is available, 50% chance to take it
+        if (cells[4] === "" && Math.random() < 0.5) {
+            return 4;
+        }
+
+        // Get strategic spots (e.g., corners or best available positions)
+        const strategicSpots = getStrategicSpots(cells);
+        if (strategicSpots.length > 0) {
+            const chosenSpot = strategicSpots[Math.floor(Math.random() * strategicSpots.length)];
+            console.log("AI picking a strategic spot:", chosenSpot);
+            return chosenSpot;
+        }
+    }
+
+    // Fall back to a completely random move
+    const randomMove = findRandomMove();
+    console.log("AI making a random move:", randomMove);
+    return randomMove;
+}
+
+    
 
 function findBestMove(depthLimit = Infinity) {
     let bestVal = -Infinity;
@@ -205,12 +293,12 @@ function evaluate(board) {
     const winningCombos = [
         [0, 1, 2],
         [3, 4, 5],
-        [6, 7, 8], // Rows
+        [6, 7, 8],
         [0, 3, 6],
         [1, 4, 7],
-        [2, 5, 8], // Columns
+        [2, 5, 8], 
         [0, 4, 8],
-        [2, 4, 6] // Diagonals
+        [2, 4, 6] 
     ];
 
     for (let combo of winningCombos) {
@@ -231,12 +319,12 @@ function checkWinner() {
     const winningCombos = [
         [0, 1, 2],
         [3, 4, 5],
-        [6, 7, 8], // Rows
+        [6, 7, 8], 
         [0, 3, 6],
         [1, 4, 7],
-        [2, 5, 8], // Columns
+        [2, 5, 8],
         [0, 4, 8],
-        [2, 4, 6] // Diagonals
+        [2, 4, 6] 
     ];
 
     return winningCombos.some(combo => {
@@ -270,7 +358,8 @@ function restartGame() {
 
 function changeMode() {
     gameMode = modeSelect.value;
-    difficultySelect.style.display = gameMode === "onePlayer" ? "block" : "none"; // Show difficulty select only in onePlayer mode
+    // Show difficulty select only in onePlayer mode
+    difficultySelect.style.display = gameMode === "onePlayer" ? "block" : "none"; 
     restartGame();
 }
 
