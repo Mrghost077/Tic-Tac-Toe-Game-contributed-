@@ -200,8 +200,8 @@ function getStrategicSpots(board) {
 function normalMode() {
     
 
-    // 70% chance to play strategically, 30% chance to play randomly
-    if (Math.random() < 0.7) {
+    // 50% chance to play strategically, 30% chance to play randomly
+    if (Math.random() < 0.5) {
 
         // Try to win in one move
         const winningMove = findWinningMove(cells, 'cross'); // AI is 'cross'
